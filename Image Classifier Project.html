@@ -13339,6 +13339,8 @@ GPU Workspaces about Keeping Your Session Active. You'll want to include code fr
 
 <div class="output_subarea output_stream output_stderr output_text">
 <pre>/opt/conda/lib/python3.6/site-packages/torchvision-0.2.1-py3.6.egg/torchvision/models/densenet.py:212: UserWarning: nn.init.kaiming_normal is now deprecated in favor of nn.init.kaiming_normal_.
+Downloading: &#34;https://download.pytorch.org/models/densenet121-a639ec97.pth&#34; to /root/.torch/models/densenet121-a639ec97.pth
+100%|██████████| 32342954/32342954 [00:00&lt;00:00, 67968104.96it/s]
 </pre>
 </div>
 </div>
@@ -14408,7 +14410,7 @@ GPU Workspaces about Keeping Your Session Active. You'll want to include code fr
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div>
+<div class="prompt input_prompt">In&nbsp;[7]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython3"><pre><span></span><span class="c1">#Train the network and calculate training loss,validation loss and accuracy</span>
@@ -14472,25 +14474,25 @@ GPU Workspaces about Keeping Your Session Active. You'll want to include code fr
 
 
 <div class="output_subarea output_stream output_stdout output_text">
-<pre>Epoch 1/6.. Train loss: 4.104.. Validation loss: 3.149.. Validation accuracy: 0.337
-Epoch 1/6.. Train loss: 2.576.. Validation loss: 1.598.. Validation accuracy: 0.653
-Epoch 1/6.. Train loss: 1.812.. Validation loss: 0.991.. Validation accuracy: 0.750
-Epoch 2/6.. Train loss: 1.488.. Validation loss: 0.803.. Validation accuracy: 0.799
-Epoch 2/6.. Train loss: 1.139.. Validation loss: 0.607.. Validation accuracy: 0.849
-Epoch 2/6.. Train loss: 1.047.. Validation loss: 0.573.. Validation accuracy: 0.847
-Epoch 3/6.. Train loss: 0.944.. Validation loss: 0.483.. Validation accuracy: 0.889
-Epoch 3/6.. Train loss: 0.899.. Validation loss: 0.507.. Validation accuracy: 0.852
-Epoch 3/6.. Train loss: 0.883.. Validation loss: 0.413.. Validation accuracy: 0.903
-Epoch 4/6.. Train loss: 0.842.. Validation loss: 0.408.. Validation accuracy: 0.886
-Epoch 4/6.. Train loss: 0.689.. Validation loss: 0.380.. Validation accuracy: 0.904
-Epoch 4/6.. Train loss: 0.740.. Validation loss: 0.395.. Validation accuracy: 0.889
-Epoch 5/6.. Train loss: 0.745.. Validation loss: 0.427.. Validation accuracy: 0.893
-Epoch 5/6.. Train loss: 0.704.. Validation loss: 0.378.. Validation accuracy: 0.889
-Epoch 5/6.. Train loss: 0.696.. Validation loss: 0.331.. Validation accuracy: 0.907
-Epoch 5/6.. Train loss: 0.685.. Validation loss: 0.334.. Validation accuracy: 0.907
-Epoch 6/6.. Train loss: 0.646.. Validation loss: 0.318.. Validation accuracy: 0.916
-Epoch 6/6.. Train loss: 0.658.. Validation loss: 0.355.. Validation accuracy: 0.896
-Epoch 6/6.. Train loss: 0.652.. Validation loss: 0.317.. Validation accuracy: 0.915
+<pre>Epoch 1/6.. Train loss: 4.067.. Validation loss: 2.980.. Validation accuracy: 0.394
+Epoch 1/6.. Train loss: 2.537.. Validation loss: 1.563.. Validation accuracy: 0.604
+Epoch 1/6.. Train loss: 1.779.. Validation loss: 1.017.. Validation accuracy: 0.761
+Epoch 2/6.. Train loss: 1.330.. Validation loss: 0.796.. Validation accuracy: 0.796
+Epoch 2/6.. Train loss: 1.172.. Validation loss: 0.710.. Validation accuracy: 0.812
+Epoch 2/6.. Train loss: 1.042.. Validation loss: 0.546.. Validation accuracy: 0.859
+Epoch 3/6.. Train loss: 0.969.. Validation loss: 0.530.. Validation accuracy: 0.856
+Epoch 3/6.. Train loss: 0.871.. Validation loss: 0.516.. Validation accuracy: 0.868
+Epoch 3/6.. Train loss: 0.880.. Validation loss: 0.469.. Validation accuracy: 0.877
+Epoch 4/6.. Train loss: 0.850.. Validation loss: 0.417.. Validation accuracy: 0.881
+Epoch 4/6.. Train loss: 0.774.. Validation loss: 0.408.. Validation accuracy: 0.887
+Epoch 4/6.. Train loss: 0.761.. Validation loss: 0.367.. Validation accuracy: 0.901
+Epoch 5/6.. Train loss: 0.768.. Validation loss: 0.398.. Validation accuracy: 0.893
+Epoch 5/6.. Train loss: 0.723.. Validation loss: 0.361.. Validation accuracy: 0.913
+Epoch 5/6.. Train loss: 0.698.. Validation loss: 0.362.. Validation accuracy: 0.894
+Epoch 5/6.. Train loss: 0.677.. Validation loss: 0.365.. Validation accuracy: 0.892
+Epoch 6/6.. Train loss: 0.692.. Validation loss: 0.354.. Validation accuracy: 0.894
+Epoch 6/6.. Train loss: 0.683.. Validation loss: 0.310.. Validation accuracy: 0.920
+Epoch 6/6.. Train loss: 0.634.. Validation loss: 0.325.. Validation accuracy: 0.911
 </pre>
 </div>
 </div>
@@ -14558,7 +14560,7 @@ Epoch 6/6.. Train loss: 0.652.. Validation loss: 0.317.. Validation accuracy: 0.
 <div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># TODO: Save the checkpoint </span>
 <span class="n">model</span><span class="o">.</span><span class="n">class_to_idx</span> <span class="o">=</span> <span class="n">train_datasets</span><span class="o">.</span><span class="n">class_to_idx</span>
 
-<span class="n">checkpoint</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;input_size&#39;</span><span class="p">:</span> <span class="mi">25088</span><span class="p">,</span>
+<span class="n">checkpoint</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;input_size&#39;</span><span class="p">:</span> <span class="mi">1024</span><span class="p">,</span>
               <span class="s1">&#39;output_size&#39;</span><span class="p">:</span> <span class="mi">102</span><span class="p">,</span>
               <span class="s1">&#39;model_state_dict&#39;</span><span class="p">:</span> <span class="n">model</span><span class="o">.</span><span class="n">state_dict</span><span class="p">(),</span>
               <span class="s1">&#39;optimizer_state_dict&#39;</span><span class="p">:</span> <span class="n">optimizer</span><span class="o">.</span><span class="n">state_dict</span><span class="p">(),</span>
