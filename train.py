@@ -52,15 +52,19 @@ def build_network(input_size, output_size, hidden_units, drop_p,arch):
     
     for params in model.parameters():
         params.requires_grad= False
-    
-    classifier = nn.Sequential(nn.Linear(input_size,hidden_units), 
+            
+    fc_classifier = nn.Sequential(nn.Linear(input_size,hidden_units), 
                                      nn.ReLU(),
                                      nn.Dropout(drop_p),
                                      nn.Linear(hidden_units,output_size),
                                      nn.LogSoftmax(dim=1))
-    model.classifier = classifier
-    criterion = nn.NLLLoss()
+    if arch.startwith('resnet'):
+        model.fc = fc_classifier 
+    else:
+        model.classifier = fc_classifier
     
+    criterion = nn.NLLLoss()
+        
     return model,criterion
 
 
@@ -119,14 +123,18 @@ def train_network(model, trainloader, validateloader, criterion, optimizer, devi
 def save_model(model, arch, optimizer, train_datasets, save_dir, input_size, output_size, hidden_units, epochs):
     model.class_to_idx = train_datasets.class_to_idx
 
-    checkpoint = {'arch': 'densenet121',
-                  'input_size': 1024,
-                  'output_size': 102,
+    checkpoint = {'arch': arch,
+                  'input_size': input_size,
+                  'output_size': output_size,
                   'classes_indices_map': model.class_to_idx,
-                  'classifier': model.classifier,
                   'model_state_dict': model.state_dict(),
                   'optimizer_state_dict': optimizer.state_dict(),              
                   'epoch': epochs}
+    
+    if arch.startswith('resnet):
+        checkpoint['fc'] = model.fc
+    else:
+        checkpoint['classifier'] = model.classifier
 
     model_checkpoint=save_dir+'/model_checkpoint.pth'
     torch.save(checkpoint, model_checkpoint)
