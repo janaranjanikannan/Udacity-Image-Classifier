@@ -17,7 +17,10 @@ def load_checkpoint(filepath):
     model = eval("models.{}(pretrained=True)".format(arch))
                
     model.class_to_idx = checkpoint['classes_indices_map']
-    model.classifier = checkpoint['classifier']
+    if checkpoint.has_key('classifier'):
+        model.classifier = checkpoint['classifier']
+    elif checkpoint.has_key('fc'):
+        model.fc = checkpoint['fc']
     model.load_state_dict(checkpoint['model_state_dict'])
     
     optimizer = optim.Adam(model.classifier.parameters(), lr=1e-3)    
