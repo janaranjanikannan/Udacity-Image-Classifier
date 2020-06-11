@@ -12,7 +12,7 @@ def get_data(data_dir):
     train_dir = data_dir + '/train'
     valid_dir = data_dir + '/valid'
     test_dir = data_dir + '/test'
-    
+
     # Define transforms for the training, validation, and testing sets
     train_transforms = transforms.Compose([transforms.RandomRotation(30),
                                        transforms.RandomResizedCrop(224),
@@ -46,25 +46,25 @@ def get_data(data_dir):
 
 
 #Build the network
-def build_network(input_size, output_size, hidden_units, drop_p,arch):        
+def build_network(input_size, output_size, hidden_units, drop_p,arch):
 
     model = eval("models.{}(pretrained=True)".format(arch))
-    
+
     for params in model.parameters():
         params.requires_grad= False
-            
-    fc_classifier = nn.Sequential(nn.Linear(input_size,hidden_units), 
+
+    fc_classifier = nn.Sequential(nn.Linear(input_size,hidden_units),
                                      nn.ReLU(),
                                      nn.Dropout(drop_p),
                                      nn.Linear(hidden_units,output_size),
                                      nn.LogSoftmax(dim=1))
     if arch.startwith('resnet'):
-        model.fc = fc_classifier 
+        model.fc = fc_classifier
     else:
         model.classifier = fc_classifier
-    
+
     criterion = nn.NLLLoss()
-        
+
     return model,criterion
 
 
@@ -117,7 +117,7 @@ def train_network(model, trainloader, validateloader, criterion, optimizer, devi
                 train_loss = 0
                 model.train()
     print("Training completed successfully!")
-    
+
 
 #Save the model
 def save_model(model, arch, optimizer, train_datasets, save_dir, input_size, output_size, hidden_units, epochs):
@@ -128,9 +128,9 @@ def save_model(model, arch, optimizer, train_datasets, save_dir, input_size, out
                   'output_size': output_size,
                   'classes_indices_map': model.class_to_idx,
                   'model_state_dict': model.state_dict(),
-                  'optimizer_state_dict': optimizer.state_dict(),              
+                  'optimizer_state_dict': optimizer.state_dict(),
                   'epoch': epochs}
-    
+
     if arch.startswith('resnet):
         checkpoint['fc'] = model.fc
     else:
@@ -139,7 +139,11 @@ def save_model(model, arch, optimizer, train_datasets, save_dir, input_size, out
     model_checkpoint=save_dir+'/model_checkpoint.pth'
     torch.save(checkpoint, model_checkpoint)
     print("Model is saved. The location of {} is {}".format('model_checkpoint.pth',save_dir))
-    
+
+def gpu_check():
+    print("Pytorch version is {}".format(torch.__version__))
+    gpu_check = torch.cuda.is_available()
+    return gpu_check
 
 #Main function
 def main():
@@ -148,73 +152,119 @@ def main():
 
     parser.add_argument ('data_dir', help = 'Provide data directory.', type = str, action="store", default='./flowers')
     parser.add_argument ('--save_dir', help = 'Optional: Provide saving directory. Default is current directory', type = str, dest="save_dir", action="store", default=".")
-    parser.add_argument ('--arch', help = 'Optional: Currently it supports only densenet121, densenet169, densenet161, densenet201 and alexnet pretrained model. Default pretrained model is densenet121', type = str, dest="arch", action="store", default="densenet121")
+    parser.add_argument ('--arch', help = 'Optional: Currently it supports only densenet, alexnet and vgg pretrained models. Default pretrained model is densenet121', type = str, dest="arch", action="store", default="densenet121")
     parser.add_argument ('--learning_rate', help = 'Optional: Learning rate. Default value is 0.003', type = float,dest="learning_rate", action="store", default=0.003)
     parser.add_argument ('--input_units', help = 'Optional: Input units in Classifier. Default value is 1024', type = int, dest="input_units", action="store", default=1024)
     parser.add_argument ('--hidden_units', help = 'Optional: Hidden units in Classifier. Default value is 512', type = int, dest="hidden_units", action="store", default=512)
-    parser.add_argument ('--output_units', help = 'Optional: Hidden units in Classifier. Default value is 102', type = int, dest="output_units", action="store", default=102)
+    parser.add_argument ('--output_units', help = 'Optional: Output units in Classifier. Default value is 102', type = int, dest="output_units", action="store", default=102)
     parser.add_argument ('--epochs', help = 'Optional: Number of epochs. Default value is 5', type = int, dest="epochs", action="store",  default=6)
     parser.add_argument ('--GPU', help = "Optional: Option to use GPU. Default is GPU", type = str, dest="GPU", action="store", default="GPU")
 
     #setting values data loading
     args = parser.parse_args ()
-    
+
     #assign values
-    data_dir = args.data_dir    
-    save_dir = args.save_dir    
-    arch = args.arch    
+    data_dir = args.data_dir
+    save_dir = args.save_dir
+    arch = args.arch
     learning_rate = args.learning_rate
     input_size = args.input_units
     hidden_units = args.hidden_units
     output_size = args.output_units
     epochs = args.epochs
-    
+
+    if arch == 'help':
+        print("List of available CNN networks:")
+        print("1. densenet121 (default)")
+        print("2. densenet169")
+        print("3. densenet161")
+        print("4. densenet201")
+        print("5. alexnet")
+        print("6. vgg11")
+        print("7. vgg13")
+        print("8. vgg16")
+        print("9. vgg19")
+        quit()
+
+    if(not (learning_rate > 0 and learning_rate < 1)):
+        print("Error: invalid learning rate.")
+        print("Must be between 0 and 1 exclusive")
+        quit()
+
+    if epochs <= 0:
+        print("Error: invalid epoch value.")
+        print("Must be greater than 0")
+        quit()
+
+    if hidden_units <= 0:
+        print("Error: invalid number of hidden units given.")
+        print("Must be greater than 0")
+        quit()
+
+    if output_size <= 0:
+        print("Error: invalid number of output units given.")
+        print("Must be greater than 0")
+        quit()
+
+    arches = ["densenet121","densenet169","densenet161","densenet201","alexnet","vgg11","vgg13","vgg16","vgg19"]
+    if arch not in arches:
+        print("Error: invalid architecture name received")
+        print("Type 'python train.py -a help' for more information")
+
     if arch == 'alexnet':
         if input_size != 9216:
             print("{} is incorrect number of input units for the pretrained model: {}. Hence setting it to 9216.".format(input_size,arch))
-    
+
     if arch == 'densenet121':
         if input_size != 1024:
             print("{} is incorrect number of input units for the pretrained model: {}. Hence setting it to 1024.".format(input_size,arch))
-    
+
     if arch == 'densenet169':
         if input_size != 1664:
             print("{} is incorrect number of input units for the pretrained model: {}. Hence setting it to 1664.".format(input_size,arch))
-    
+
     if arch == 'densenet161':
         if input_size != 2208:
             print("{} is incorrect number of input units for the pretrained model: {}. Hence setting it to 2208.".format(input_size,arch))
-    
+
     if arch == 'densenet201':
         if input_size != 1920:
             print("{} is incorrect number of input units for the pretrained model: {}. Hence setting it to 1920.".format(input_size,arch))
 
     if args.GPU == 'GPU':
-        device = 'cuda'
-    else:
+        if gpu_check:
+            print("GPU Device available")
+            device = 'cuda'
+        else:
+            warnings.warn("No GPU found. Please use a GPU to train your network.")
+    elif args.GPU == 'CPU':
         device = 'cpu'
+    else:
+        print("Error: invalid device name received")
+        print("It must be either 'cpu' or 'gpu'")
+        quit()
 
     drop = 0.5
     print_every = 40
-        
+
     print("Loading the data...")
     train_datasets,trainloader, validateloader, testloader = get_data(data_dir)
-    
+
     print("Building the network...")
     model,criterion = build_network(input_size, output_size, hidden_units, drop, arch)
     print("Model:", model)
     model.to(device)
-    
+
     print("Getting the optimizer...")
     optimizer = get_optimizer(model,learning_rate)
     print("Optimizer: ", optimizer)
-    
+
     print("Training the model...")
     train_network(model, trainloader, validateloader, criterion, optimizer, device, epochs=5, print_every=40)
-    
+
     print("Saving the model..")
-    save_model(model, arch, optimizer, train_datasets, save_dir, input_size, output_size, hidden_units,epochs)    
+    save_model(model, arch, optimizer, train_datasets, save_dir, input_size, output_size, hidden_units,epochs)
     model.cpu()
-    
+
 if __name__ == '__main__':
     main()
